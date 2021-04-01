@@ -1,12 +1,11 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 
 import { VaultPoolV1 } from "../../../generated/schema";
-
-import { loadSubgraphConfig } from "../loadSubgraphConfig";
-import { createPoolToken } from "../createPoolToken";
-import { createToken } from "../createToken";
-import { loadOrCreateVaultControllerV1 } from "./vaultController";
 import { YVaultV1 } from "../../../generated/VaultSavingsV1/YVaultV1";
+
+import { createPoolToken, createToken } from "../tokens";
+import { loadSubgraphConfig } from "../loadSubgraphConfig";
+import { loadOrCreateVaultControllerV1 } from "./vaultController";
 import {
   getStrategyV1Address,
   loadOrCreateVaultStrategyV1,

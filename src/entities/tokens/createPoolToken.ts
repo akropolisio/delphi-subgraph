@@ -1,7 +1,7 @@
 import { Address } from "@graphprotocol/graph-ts";
 
-import { PoolToken } from "../../generated/schema";
-import { ERC20Detailed } from "../../generated/SavingsModule/ERC20Detailed";
+import { PoolToken } from "../../../generated/schema";
+import { ERC20Detailed } from "../../../generated/SavingsModule/ERC20Detailed";
 
 export function createPoolToken(
   tokenAddress: Address,

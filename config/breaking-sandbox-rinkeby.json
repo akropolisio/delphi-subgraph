@@ -1,0 +1,14 @@
+{
+  "startBlock": 7004100,
+  "network": "rinkeby",
+  "modules": {
+    "savings": "0xb733994019A4F55CAa3f130400B7978Cc6624c39",
+    "investment": "0x0000000000000000000000000000000000000000",
+    "vaultSavingsV1": "0x141d9BdA509ED6F2C59672eb503c521b9F6cD344",
+    "vaultSavingsV2": "0x90AA1e10C11B3B97CC82C17478acbf51DaDFbb3d",
+    "rewardDistribution": "0x586C698698f316D9f10332A4300859DD8A82B130",
+    "akroStakingPool": "0x6887DF2f4296e8B772cb19479472A16E836dB9e0",
+    "adelStakingPool": "0x1a80540930B869df525981c4231Cd06b0Dcbf668"
+  },
+  "callSupported": false
+}

@@ -68,7 +68,6 @@ type VaultPoolV1 @entity {
   totalTVL: BigInt!
 
   users: [User!]! @derivedFrom(field: "vaultPoolsV1")
-  userV1TVLs: [UserVaultV1TVL!]! @derivedFrom(field: "vault")
 }
 
 type VaultStrategyV1 @entity {
@@ -94,10 +93,8 @@ type VaultPoolV2 @entity {
   isActive: Boolean!
   poolToken: PoolToken!
   underlyingToken: Token!
-  totalTVL: BigInt!
 
   users: [User!]! @derivedFrom(field: "vaultPoolsV2")
-  userV2TVLs: [UserVaultV2TVL!]! @derivedFrom(field: "vault")
 }
 
 ############
@@ -116,50 +113,11 @@ type User @entity {
 
   visitedVaultPoolsV1: [VaultPoolV1!]!
   visitedVaultPoolsV2: [VaultPoolV2!]!
-
-  vaultV1TVLs: [UserVaultV1TVL!]! @derivedFrom(field: "user")
-  vaultV2TVLs: [UserVaultV2TVL!]! @derivedFrom(field: "user")
 }
 
-type UserVaultV1TVL @entity {
-  "vaultAddress + userAddress"
-  id: ID!
-  amount: BigInt!
-  vault: VaultPoolV1!
-  user: User!
-}
-
-type UserVaultV1TVLChanged @entity {
-  "address"
-  id: ID!
-  amount: BigInt!
-  blockNumber: BigInt!
-  date: Int!
-  vault: VaultPoolV1!
-  user: User!
-  "increase | decrease"
-  eventType: String!
-}
-
-type UserVaultV2TVL @entity {
-  "vaultAddress + userAddress"
-  id: ID!
-  amount: BigInt!
-  vault: VaultPoolV2!
-  user: User!
-}
-
-type UserVaultV2TVLChanged @entity {
-  "address"
-  id: ID!
-  amount: BigInt!
-  blockNumber: BigInt!
-  date: Int!
-  vault: VaultPoolV2!
-  user: User!
-  "increase | decrease"
-  eventType: String!
-}
+################
+### BALANCES ###
+################
 
 enum Module {
   savings

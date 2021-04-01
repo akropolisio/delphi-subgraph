@@ -3,8 +3,7 @@ import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { VaultPoolV2 } from "../../../generated/schema";
 
 import { loadSubgraphConfig } from "../loadSubgraphConfig";
-import { createPoolToken } from "../createPoolToken";
-import { createToken } from "../createToken";
+import { createPoolToken, createToken } from "../tokens";
 
 export function createOrUpdateVaultPoolV2(
   vaultAddress: Address,
@@ -15,7 +14,6 @@ export function createOrUpdateVaultPoolV2(
 
   if (!pool) {
     pool = new VaultPoolV2(vaultAddress.toHex());
-    pool.totalTVL = BigInt.fromI32(0);
     pool.isActive = true;
   }
 

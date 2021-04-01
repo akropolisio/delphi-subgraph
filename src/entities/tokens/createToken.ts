@@ -1,7 +1,7 @@
 import { Address } from "@graphprotocol/graph-ts";
 
-import { Token } from "../../generated/schema";
-import { ERC20Detailed } from "../../generated/SavingsModule/ERC20Detailed";
+import { Token } from "../../../generated/schema";
+import { ERC20Detailed } from "../../../generated/SavingsModule/ERC20Detailed";
 
 export function createToken(address: Address): Token {
   let token = new Token(address.toHex());

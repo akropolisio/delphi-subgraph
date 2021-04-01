@@ -5,6 +5,7 @@ on:
     branches:
       - stable
       - sandbox
+      - DD-2159-integrate-yearn-affiliate-token
 
 jobs:
   deploy:
@@ -46,3 +47,17 @@ jobs:
         with:
           thegraph_access_token: ${{ secrets.THEGRAPH_ACCESS_TOKEN }}
           type: sandbox-rinkeby
+
+      - name: Build and deploy Breaking Sandbox Mainnet
+        if: github.ref == 'refs/heads/DD-2159-integrate-yearn-affiliate-token'
+        uses: ./.github/actions/deploy-subgraph
+        with:
+          thegraph_access_token: ${{ secrets.THEGRAPH_ACCESS_TOKEN }}
+          type: breaking-sandbox-mainnet
+
+      - name: Build and deploy Breaking Sandbox Rinkeby
+        if: github.ref == 'refs/heads/DD-2159-integrate-yearn-affiliate-token'
+        uses: ./.github/actions/deploy-subgraph
+        with:
+          thegraph_access_token: ${{ secrets.THEGRAPH_ACCESS_TOKEN }}
+          type: breaking-sandbox-rinkeby

@@ -1,56 +1,45 @@
-import { Address, BigInt, dataSource } from "@graphprotocol/graph-ts";
+import { BigInt, dataSource } from "@graphprotocol/graph-ts";
 
 import { User } from "../../generated/schema";
+import { Transfer } from "../../generated/templates/YVaultV1/YVaultV1";
 import {
-  Transfer,
-  YVaultV1,
-} from "../../generated/templates/YVaultV1/YVaultV1";
-import { loadUser, loadVaultPoolV1 } from "../entities";
-import { createV1TVLChangedEvent } from "../entities/vaultSavingsV1/createTVLChangedEvent";
-import { loadOrCreateV1TVL } from "../entities/vaultSavingsV1/loadOrCreateTVL";
+  createOrUpdateUserBalance,
+  loadUser,
+  loadUserBalance,
+  loadVaultPoolV1,
+  deactivateUserIfZeroBalance,
+} from "../entities";
 import { exclude } from "../utils";
-import { deactivateUserIfZeroBalance } from "./deactivateUserIfZeroBalance";
 
 export function handleTransfer(event: Transfer): void {
   let userAddress = event.params.from;
-  let user = loadUser(userAddress);
+  let yVaultAddress = dataSource.address();
 
-  if (!user || !user.vaultPoolsV1.length) {
+  let user = loadUser(userAddress);
+  let balance = loadUserBalance(userAddress, yVaultAddress);
+
+  if (!balance || !user) {
     return;
   }
 
-  let yVaultAddress = dataSource.address();
-  let contract = YVaultV1.bind(yVaultAddress);
-  let userBalance = contract.balanceOf(userAddress);
+  let balanceIncrease = balance.value.lt(event.params.value)
+    ? balance.value.neg()
+    : event.params.value.neg();
 
-  if (userBalance.le(BigInt.fromI32(0))) {
+  let nextBalance = createOrUpdateUserBalance(
+    userAddress,
+    yVaultAddress,
+    balanceIncrease,
+    "vaultsV1"
+  );
+
+  if (nextBalance.value.le(BigInt.fromI32(0))) {
     user.vaultPoolsV1 = exclude(user.vaultPoolsV1, yVaultAddress.toHex());
     deactivateUserIfZeroBalance(user as User);
     user.save();
   }
 
-  // TODO what if there is multiple withdraws in one transaction
-  let tvl = loadOrCreateV1TVL(yVaultAddress.toHex(), userAddress.toHex());
-
-  let balanceBeforeTransfer = userBalance.plus(event.params.value);
-  let shareMultiplier = BigInt.fromI32(1000000000);
-  let share = balanceBeforeTransfer.isZero()
-    ? BigInt.fromI32(0)
-    : event.params.value.times(shareMultiplier).div(balanceBeforeTransfer);
-  let withdrawTVLAmount = tvl.amount.times(share).div(shareMultiplier);
-
-  tvl.amount = tvl.amount.minus(withdrawTVLAmount);
-  tvl.save();
-
   let pool = loadVaultPoolV1(yVaultAddress);
-  pool.totalTVL = pool.totalTVL.minus(withdrawTVLAmount);
+  pool.totalTVL = pool.totalTVL.plus(balanceIncrease);
   pool.save();
-
-  createV1TVLChangedEvent(
-    event,
-    withdrawTVLAmount,
-    yVaultAddress.toHex(),
-    userAddress.toHex(),
-    "decrease"
-  );
 }

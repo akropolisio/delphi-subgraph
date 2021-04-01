@@ -1,6 +1,6 @@
 import { Address } from "@graphprotocol/graph-ts";
 
-import { Token } from "../../generated/schema";
+import { Token } from "../../../generated/schema";
 import { createToken } from "./createToken";
 
 export function loadToken(address: Address): Token {

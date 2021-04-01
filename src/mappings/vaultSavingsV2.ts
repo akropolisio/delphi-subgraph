@@ -4,58 +4,36 @@ import {
   VaultDisabled,
   VaultRegistered,
 } from "../../generated/VaultSavingsV2/VaultSavingsV2";
-import { YVaultV2 } from "../../generated/templates";
-import {
-  createOrUpdateVaultPoolV2,
-  loadOrCreateUser,
-  loadVaultPoolV2,
-} from "../entities";
-import { addUniq } from "../utils";
-import { loadOrCreateV2TVL } from "../entities/vaultSavingsV2/loadOrCreateTVL";
-import { createV2TVLChangedEvent } from "../entities/vaultSavingsV2/createTVLChangedEvent";
-import { activateUser } from "./activateUser";
+import { YearnAToken } from "../../generated/VaultSavingsV2/YearnAToken";
+import { YearnAToken as YearnATokenTemplate } from "../../generated/templates";
+import { createOrUpdateVaultPoolV2, loadVaultPoolV2 } from "../entities";
 
 export function handleVaultRegistered(event: VaultRegistered): void {
-  createOrUpdateVaultPoolV2(event.params.vault, event.params.baseToken);
-  YVaultV2.create(event.params.vault);
+  let AToken = YearnAToken.bind(event.params.vault);
+  let bestVault = AToken.try_bestVault();
+
+  // check that vault is an affiliate token
+  if (!bestVault.reverted) {
+    createOrUpdateVaultPoolV2(event.params.vault, event.params.baseToken);
+
+    YearnATokenTemplate.create(event.params.vault);
+  }
 }
 
 export function handleVaultDisabled(event: VaultDisabled): void {
   let vault = loadVaultPoolV2(event.params.vault);
-  vault.isActive = false;
-  vault.save();
+
+  if (vault) {
+    vault.isActive = false;
+    vault.save();
+  }
 }
 
 export function handleVaultActivated(event: VaultActivated): void {
   let vault = loadVaultPoolV2(event.params.vault);
-  vault.isActive = true;
-  vault.save();
-}
 
-export function handleDeposit(event: Deposit): void {
-  let user = loadOrCreateUser(event.params.user);
-  user.vaultPoolsV2 = addUniq(user.vaultPoolsV2, event.params.vault.toHex());
-  user.visitedVaultPoolsV2 = addUniq(user.visitedVaultPoolsV2, event.params.vault.toHex());
-  activateUser(user);
-  user.save();
-
-  let tvl = loadOrCreateV2TVL(
-    event.params.vault.toHex(),
-    event.params.user.toHex()
-  );
-
-  tvl.amount = tvl.amount.plus(event.params.lpAmount);
-  tvl.save();
-
-  let vaultPool = loadVaultPoolV2(event.params.vault);
-  vaultPool.totalTVL = vaultPool.totalTVL.plus(event.params.lpAmount);
-  vaultPool.save();
-
-  createV2TVLChangedEvent(
-    event,
-    event.params.lpAmount,
-    event.params.vault.toHex(),
-    event.params.user.toHex(),
-    "increase"
-  );
+  if (vault) {
+    vault.isActive = true;
+    vault.save();
+  }
 }

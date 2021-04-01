@@ -1,10 +1,13 @@
 import { dataSource } from "@graphprotocol/graph-ts";
 
 import { Staked, Unstaked } from "../../generated/ADELStakingPool/StakingPool";
-import { createOrUpdateUserBalance, loadOrCreateUser } from "../entities";
+import {
+  createOrUpdateUserBalance,
+  loadOrCreateUser,
+  activateUser,
+  deactivateUserIfZeroBalance,
+} from "../entities";
 import { addUniq, exclude } from "../utils";
-import { activateUser } from "./activateUser";
-import { deactivateUserIfZeroBalance } from "./deactivateUserIfZeroBalance";
 
 export function handleStaked(event: Staked): void {
   let user = loadOrCreateUser(event.params.user);

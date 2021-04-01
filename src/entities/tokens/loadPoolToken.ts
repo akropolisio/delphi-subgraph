@@ -1,6 +1,6 @@
 import { Address } from "@graphprotocol/graph-ts";
 
-import { PoolToken } from "../../generated/schema";
+import { PoolToken } from "../../../generated/schema";
 import { createPoolToken } from "./createPoolToken";
 
 export function loadPoolToken(address: Address): PoolToken {

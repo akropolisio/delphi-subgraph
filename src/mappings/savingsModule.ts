@@ -23,10 +23,10 @@ import {
   createSRewardFromSavingsModuleEvent,
   loadGlobalStat,
   createOrUpdateUserBalance,
+  deactivateUserIfZeroBalance,
+  activateUser,
 } from "../entities";
 import { calcAPY, addUniq, exclude } from "../utils";
-import { deactivateUserIfZeroBalance } from "./deactivateUserIfZeroBalance";
-import { activateUser } from "./activateUser";
 
 export function handleProtocolRegistered(event: ProtocolRegistered): void {
   createOrUpdateSavingsPool(

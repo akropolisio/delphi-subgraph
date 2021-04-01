@@ -3,11 +3,10 @@ import { ethereum, BigInt, Address } from "@graphprotocol/graph-ts";
 import { SavingsPool } from "../../../generated/schema";
 import { DefiProtocol } from "../../../generated/SavingsModule/DefiProtocol";
 
-import { createSPoolBalance } from "./createSPoolBalance";
-import { loadToken } from "../loadToken";
-import { createSPoolApr } from "./createSPoolApr";
+import { loadToken, createPoolToken } from "../tokens";
 import { loadSubgraphConfig } from "../loadSubgraphConfig";
-import { createPoolToken } from "../createPoolToken";
+import { createSPoolBalance } from "./createSPoolBalance";
+import { createSPoolApr } from "./createSPoolApr";
 
 export function createOrUpdateSavingsPool(
   event: ethereum.Event,
